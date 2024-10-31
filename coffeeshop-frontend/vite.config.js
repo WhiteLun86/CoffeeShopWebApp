@@ -10,6 +10,16 @@ export default defineConfig({
     vue(),
     vueDevTools(),
   ],
+  server: {
+    proxy: {
+      // 将 `/api` 路径的请求代理到后端服务器
+      '/api': {
+        target: 'http://localhost:8080', // 后端服务器地址
+        changeOrigin: true,
+        // rewrite: (path) => path.replace(/^\/api/, '') // 移除 /api 前缀
+      }
+    }
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

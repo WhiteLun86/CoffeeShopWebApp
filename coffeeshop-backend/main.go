@@ -1,21 +1,23 @@
+// main.go
 package main
 
 import (
-	"net/http"
+	"gobackend/config"
+	"gobackend/routes"
 
 	"github.com/labstack/echo/v4"
 )
 
-func helloHandler(c echo.Context) error {
-	return c.String(http.StatusOK, "Hello, World!")
-}
-
 func main() {
-	// 创建一个新的 Echo 实例
+	// 连接数据库
+	config.ConnectDatabase()
+
+	// 创建 Echo 实例
 	e := echo.New()
-	// 定义一个路由
-	e.GET("/", helloHandler)
+
+	// 初始化路由
+	routes.InitRoutes(e)
 
 	// 启动服务器
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(":8080"))
 }
