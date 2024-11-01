@@ -9,4 +9,6 @@ import (
 
 func InitRoutes(e *echo.Echo) {
 	e.POST("/api/login", controllers.Login)
+	e.GET("/api/users", controllers.GetUsers)
+	e.DELETE("api/users/:id", controllers.DeleteUser) // 添加删除用户路由
 }
