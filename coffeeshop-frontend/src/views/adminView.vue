@@ -4,8 +4,8 @@
             <n-layout has-sider>
                 <n-layout-sider bordered collapse-mode="width" :collapsed-width="64" :width="240" :collapsed="collapsed"
                     show-trigger @collapse="collapsed = true" @expand="collapsed = false">
-                    <n-menu :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22"
-                        :options="menuOptions" />
+                    <n-menu accordion :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22"
+                        :options="menuOptions"/>
                 </n-layout-sider>
                 <n-layout-content content-style="padding: 24px;">
                     <RouterView></RouterView>
@@ -16,9 +16,13 @@
 
 </template>
 <script setup>
-import { ref, h } from 'vue';
-import { RouterView, RouterLink } from 'vue-router';
+import { ref, h,  onMounted} from 'vue';
+import { RouterView, RouterLink,useRouter } from 'vue-router';
+const route = useRouter();
 const collapsed = ref(false);
+onMounted(() => {
+    route.replace('/admin');
+})
 const menuOptions = ref([
     {
         label: "用户管理",

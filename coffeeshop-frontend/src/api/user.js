@@ -1,9 +1,16 @@
 import axiosInstance from "../utils/axiosInstance";
 
-// 获取用户列表请求
 export const fetchUsers = () => {
   return axiosInstance.get("/users");
 };
+
 export const deleteUser = (id) => {
   return axiosInstance.delete(`/users/${id}`);
 };
+
+export const updateUser = (userData) => {
+  return axiosInstance.put('/user/update', userData)
+}
+export const createUser = (userData) => {
+  return axiosInstance.post('/users', userData)
+}

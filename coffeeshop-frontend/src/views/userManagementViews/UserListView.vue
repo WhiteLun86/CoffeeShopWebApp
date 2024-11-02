@@ -1,18 +1,15 @@
 <template>
-    <n-dialog-provider>
-        <n-data-table :single-line="false" :columns="columns" :data="data" />
-    </n-dialog-provider>
-
+    <div> <h1>咖啡商品列表</h1>
+        <n-data-table :single-line="false" :columns="columns" :data="data" /></div>
 </template>
 
 <script setup>
 import { ref, h, onBeforeMount } from 'vue';
-import { NButton, NForm, NFormItem, NInput } from "naive-ui";
-import { fetchUsers, deleteUser } from '@/api/user';
+import { NSelect, NButton, NForm, NFormItem, NInput } from "naive-ui";
+import { fetchUsers, deleteUser, updateUser } from '@/api/user';
 import { createDiscreteApi } from "naive-ui"
 const { message } = createDiscreteApi(["message"])
 const { dialog } = createDiscreteApi(["dialog"])
-const editedUser = ref({}); // 用于存储当前编辑的用户数据
 function handleDelete(row) {
     dialog.warning({
         title: "警告",
@@ -81,54 +78,77 @@ const columns = ref([
 ]);
 
 
-// 编辑用户函数
+// 编辑用户信息
 function handleEdit(row) {
-    editedUser.value = { ...row }; // 将用户信息复制到 editedUser 以便进行编辑
+    const editedUsername = ref(row.username)
+    const editedPassword = ref('')
+    const editedRole = ref(row.role)
+
     dialog.create({
         title: "编辑用户",
-        content: () => [
-            h(NForm, {
-                model: editedUser.value,
-                onSubmit: async () => {
-                    try {
-                        // await updateUser(editedUser.value);
-                        message.success("用户信息更新成功！");
-                        getUsers(); // 刷新用户列表
-                    } catch (error) {
-                        console.error("更新用户信息失败:", error);
-                        message.error("更新失败，请重试。");
-                    }
+        content: () =>
+            h(
+                NForm,
+                { labelWidth: "80px" },
+                {
+                    default: () => [
+                        h(
+                            NFormItem,
+                            { label: "用户名" },
+                            () =>
+                                h(NInput, {
+                                    value: editedUsername.value,
+                                    onUpdateValue: (value) => (editedUsername.value = value),
+                                    clearable: true
+                                })
+                        ),
+                        h(
+                            NFormItem,
+                            { label: "密码" },
+                            () =>
+                                h(NInput, {
+                                    type: "password",
+                                    value: editedPassword.value,
+                                    onUpdateValue: (value) => (editedPassword.value = value),
+                                    clearable: true
+                                })
+                        ),
+                        h(
+                            NFormItem,
+                            { label: "用户类型" },
+                            () =>
+                                h(NSelect, {
+                                    options: [
+                                        { label: "User", value: "user" },
+                                        { label: "Admin", value: "admin" }
+                                    ],
+                                    value: editedRole.value,
+                                    onUpdateValue: (value) => (editedRole.value = value),
+                                    clearable: true
+                                })
+                        )
+                    ]
                 }
-            }, {
-                default: () => [
-                    h(NFormItem, { label: "用户名" }, () =>
-                        h(NInput, {
-                            value: editedUser.value.username,
-                            onUpdateValue: (value) => editedUser.value.username = value
-                        })
-                    ),
-                    h(NFormItem, { label: "密码" }, () =>
-                        h(NInput, {
-                            type: "password",
-                            value: editedUser.value.password,
-                            onUpdateValue: (value) => editedUser.value.password = value
-                        })
-                    ),
-                    h(NFormItem, { label: "用户类型" }, () =>
-                        h(NInput, {
-                            value: editedUser.value.role,
-                            onUpdateValue: (value) => editedUser.value.role = value
-                        })
-                    ),
-                    h(
-                        NButton,
-                        { type: "primary", attrType: "submit", style: "margin-top: 10px" },
-                        { default: () => "提交修改" }
-                    )
-                ]
-            })
-        ]
-    });
+            ),
+        positiveText: "保存",
+        negativeText: "取消",
+        onPositiveClick: async () => {
+            try {
+                // 调用后端接口更新用户信息
+                await updateUser({
+                    id: row.id,
+                    username: editedUsername.value,
+                    password: editedPassword.value,
+                    role: editedRole.value
+                })
+                message.success('用户信息更新成功！')
+                setTimeout(getUsers(), 500)
+            } catch (error) {
+                console.error('用户信息更新失败:', error)
+                message.error('用户信息更新失败，请重试。')
+            }
+        }
+    })
 }
 
 const getUsers = async () => {
