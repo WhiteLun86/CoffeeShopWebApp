@@ -24,4 +24,5 @@ func InitRoutes(e *echo.Echo) {
 	e.DELETE("/api/orders/:id", controllers.DeleteOrder)
 	e.PUT("/api/coffee/:id", controllers.UpdateProduct)
 	e.PUT("/api/orders/:id/status", controllers.UpdateOrderStatus)
+	e.GET("/api/user/:user_id/orders", controllers.GetUserOrders)
 }

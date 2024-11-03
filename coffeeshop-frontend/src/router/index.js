@@ -1,13 +1,15 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Loginview from "../views/loginView.vue";
+import Loginview from "../views/LoginView.vue";
 import AdminView from "../views/adminView.vue";
-import UserView from "../views/userView.vue";
+import UserView from "../views/UserView.vue";
 import AddUserView from "../views/userManagementViews/addUserView.vue";
 import UserListView from "../views/userManagementViews/userListView.vue";
 import AddProductView from "../views/productManagementViews/addproductView.vue";
 import ProductListView from "../views/productManagementViews/productListView.vue";
-import OrderListView from "../views/orderManagementViews/orderListView.vue";
-
+import OrderListView from "../views/orderManagementViews/OrderListView.vue";
+import TakeOrderView from "../views/TakeOrderView.vue";
+import UserOrderView from "../views/UserOrderView.vue";
+import RegisterView from "../views/RegisterView.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -15,6 +17,11 @@ const router = createRouter({
       path: "/",
       name: "login",
       component: Loginview,
+    },
+    {
+      path: "/register",
+      name: "register",
+      component: RegisterView,
     },
     {
       path: "/admin",
@@ -58,6 +65,18 @@ const router = createRouter({
       path: "/user",
       name: "user",
       component: UserView,
+      children: [
+        {
+          path: "order",
+          name: "order",
+          component: TakeOrderView,
+        },
+        {
+          path: "myorder",
+          name: "userorder",
+          component: UserOrderView,
+        },
+      ]
     },
   ],
 });

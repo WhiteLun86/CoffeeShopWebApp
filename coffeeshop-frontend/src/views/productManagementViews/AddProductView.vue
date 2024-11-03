@@ -17,12 +17,6 @@
                 <n-form-item>
                     <n-button type="primary" block attr-type="submit">添加商品</n-button>
                 </n-form-item>
-                <n-alert v-if="errorMessage" title="错误" type="error" closable @close="errorMessage = ''">
-                    {{ errorMessage }}
-                </n-alert>
-                <n-alert v-if="successMessage" title="成功" type="success" closable @close="successMessage = ''">
-                    {{ successMessage }}
-                </n-alert>
             </n-form>
         </n-card>
     </div>
@@ -31,33 +25,32 @@
 <script setup>
 import { ref } from 'vue';
 import { addProduct } from '@/api/coffee'; // 确保路径正确
-
+import { createDiscreteApi } from "naive-ui";
+const { message } = createDiscreteApi(["message"]);
 const product = ref({
     name: '',
     price: 0,
     stock: 0, // 新增库存数量
     description: ''
 });
-const errorMessage = ref('');
-const successMessage = ref('');
 
 const add = async () => {
     try {
         // 确保价格和库存数量是有效数字
         if (product.value.price <= 0) {
-            errorMessage.value = '价格必须是正数！';
+            message.error('价格必须是正数！')
             return;
         }
         if (product.value.stock < 0) {
-            errorMessage.value = '库存数量不能为负数！';
+            message.error('库存数量不能为负数！')
             return;
         }
         await addProduct(product.value);
-        successMessage.value = '商品添加成功！';
+        message.success('商品添加成功！')
         // 清空表单
         product.value = { name: '', price: 0, stock: 0, description: '' };
     } catch (error) {
-        errorMessage.value = '添加商品失败，请稍后重试。';
+        message.error('添加商品失败，请稍后重试。')
         console.error("添加商品失败:", error);
     }
 };

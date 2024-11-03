@@ -5,7 +5,7 @@
                 <n-layout-sider bordered collapse-mode="width" :collapsed-width="64" :width="240" :collapsed="collapsed"
                     show-trigger @collapse="collapsed = true" @expand="collapsed = false">
                     <n-menu accordion :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22"
-                        :options="menuOptions"/>
+                        :options="menuOptions" />
                 </n-layout-sider>
                 <n-layout-content content-style="padding: 24px;">
                     <RouterView></RouterView>
@@ -16,8 +16,8 @@
 
 </template>
 <script setup>
-import { ref, h,  onMounted} from 'vue';
-import { RouterView, RouterLink,useRouter } from 'vue-router';
+import { ref, h, onMounted } from 'vue';
+import { RouterView, RouterLink, useRouter } from 'vue-router';
 const route = useRouter();
 const collapsed = ref(false);
 onMounted(() => {
@@ -25,79 +25,29 @@ onMounted(() => {
 })
 const menuOptions = ref([
     {
-        label: "用户管理",
-        key: "user-manage",
-        children: [
+        label: () => h(
+            RouterLink,
             {
-                label: () => h(
-                    RouterLink,
-                    {
-                        to: {
-                            name: "userList",
-                        }
-                    },
-                    { default: () => "用户列表" }
-                ),
-                key: "user-list"
+                to: {
+                    name: "order",
+                }
             },
-            {
-                label: () => h(
-                    RouterLink,
-                    {
-                        to: {
-                            name: "addUser",
-                        }
-                    },
-                    { default: () => "创建用户" }
-                ),
-                key: "user-create"
-            },
-
-        ]
+            { default: () => "下单商品" }
+        ),
+        key: "order",
     },
     {
         label: () => h(
             RouterLink,
             {
                 to: {
-                    name: "orderList",
+                    name: "userorder",
                 }
             },
             { default: () => "订单管理" }
         ),
-        key: "order-manage",
+        key: "userorder",
     },
-    {
-        label: "库存管理",
-        key: "product-manage",
-        children: [
-            {
-                label: () => h(
-                    RouterLink,
-                    {
-                        to: {
-                            name: "productList",
-                        }
-                    },
-                    { default: () => "商品列表" }
-                ),
-                key: "product-list"
-            },
-            {
-                label: () => h(
-                    RouterLink,
-                    {
-                        to: {
-                            name: "addProduct",
-                        }
-                    },
-                    { default: () => "添加商品" }
-                ),
-                key: "product-create"
-            },
-
-        ]
-    }
 ])
 </script>
 <style scoped>

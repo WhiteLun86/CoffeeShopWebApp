@@ -9,7 +9,11 @@
           <n-input type="password" v-model:value="password" placeholder="请输入密码" clearable />
         </n-form-item>
         <n-form-item>
-          <n-button type="primary" block attr-type="submit">登录</n-button>
+          <div style="display: flex; justify-content: space-evenly;">
+            <n-button type="primary" round attr-type="submit">登录</n-button>
+            <n-button type="primary" round @click="goToRegister">注册</n-button>
+          </div>
+
         </n-form-item>
         <!-- 错误消息显示 -->
         <n-alert title="出错！" v-if="errorMessage" type="error" closable @close="errorMessage = ''">
@@ -27,6 +31,7 @@
 import { ref } from 'vue'
 import { login } from '@/api/auth'
 import { useRouter } from 'vue-router'
+
 export default {
   setup() {
     const username = ref('')
@@ -49,16 +54,16 @@ export default {
             router.push('/admin')
             localStorage.setItem('isAuthenticated', 'true');
             localStorage.setItem('userRole', 'admin');
-          }else {
+          } else {
             router.push('/user')
             localStorage.setItem('isAuthenticated', 'true');
             localStorage.setItem('userRole', 'user');
+            localStorage.setItem('userId', response.data.id);
           }
         }, 500)
 
       } catch (error) {
         if (error.response) {
-          // 根据状态码显示相应的错误信息
           if (error.response.status === 404) {
             errorMessage.value = '用户不存在，请检查用户名。'
           } else if (error.response.status === 401) {
@@ -72,10 +77,16 @@ export default {
       }
     }
 
+    // 跳转到注册页面
+    const goToRegister = () => {
+      router.push('/register'); // 确保 '/register' 是你的注册页面的路由
+    }
+
     return {
       username,
       password,
       handleLogin,
+      goToRegister,
       errorMessage,
       successMessage
     }
@@ -84,6 +95,11 @@ export default {
 </script>
 
 <style scoped>
+.button-container {
+  display: flex;
+  flex-direction: column;
+}
+
 .login-container {
   background-image: url('@/assets/images/login-bg.jpg');
   display: flex;

@@ -37,5 +37,6 @@ func Login(c echo.Context) error {
 	return c.JSON(http.StatusOK, echo.Map{
 		"message": "登录成功",
 		"role":    user.Role,
+		"id":      user.ID,
 	})
 }

@@ -7,8 +7,8 @@
 
 <script setup>
 import { ref, h, onBeforeMount } from 'vue';
-import { NButton, NForm, NFormItem, NInput, NInputNumber } from "naive-ui";
-import { fetchCoffeeProducts, deleteProduct, updateProduct } from '@/api/coffee'; // 修改为相应的 API
+import { NButton, NForm, NFormItem, NInput, NInputNumber, } from "naive-ui";
+import { fetchCoffeeProducts, deleteProduct, updateProduct } from '@/api/coffee'; 
 import { createDiscreteApi } from "naive-ui";
 
 const { message } = createDiscreteApi(["message"]);
@@ -71,9 +71,9 @@ function handleDelete(row) {
         negativeText: "不确定",
         onPositiveClick: async () => {
             try {
-                await deleteProduct(row.id);
+                await deleteProduct(row.ID);
                 message.success('商品删除成功！');
-                getProducts(); // 刷新商品列表
+                getProducts()
             } catch (error) {
                 console.error("删除商品失败:", error);
                 message.error('删除商品失败，请重试。');
@@ -87,7 +87,10 @@ function handleDelete(row) {
 
 // 编辑商品信息
 function handleEdit(row) {
-    const editedProduct = ref({ ...row }); // 深拷贝商品数据
+    const name = ref(row.Name)
+    const price = ref(row.Price)
+    const stock = ref(row.Stock)
+    const description = ref(row.Description)
 
     dialog.create({
         title: "编辑商品",
@@ -102,8 +105,8 @@ function handleEdit(row) {
                             { label: "名称" },
                             () =>
                                 h(NInput, {
-                                    value: editedProduct.value.Name,
-                                    onUpdateValue: (value) => (editedProduct.value.name = value),
+                                    value: name.value,
+                                    onUpdateValue: (value) => (name.value = value),
                                     clearable: true,
                                 })
                         ),
@@ -111,9 +114,9 @@ function handleEdit(row) {
                             NFormItem,
                             { label: "价格" },
                             () =>
-                                h(NInput, {
-                                    value: editedProduct.value.Price,
-                                    onUpdateValue: (value) => (editedProduct.value.price = value),
+                                h(NInputNumber, {
+                                    value: price.value,
+                                    onUpdateValue: (value) => (price.value = value),
                                     clearable: true,
                                     min: 0
                                 })
@@ -122,9 +125,9 @@ function handleEdit(row) {
                             NFormItem,
                             { label: "库存数量" },
                             () =>
-                                h(NInput, {
-                                    value: editedProduct.value.Stock,
-                                    onUpdateValue: (value) => (editedProduct.value.stock = value),
+                                h(NInputNumber, {
+                                    value: stock.value,
+                                    onUpdateValue: (value) => (stock.value = value),
                                     clearable: true,
                                     min: 0
                                 })
@@ -134,8 +137,8 @@ function handleEdit(row) {
                             { label: "描述" },
                             () =>
                                 h(NInput, {
-                                    value: editedProduct.value.Description,
-                                    onUpdateValue: (value) => (editedProduct.value.description = value),
+                                    value: description.value,
+                                    onUpdateValue: (value) => (description.value = value),
                                     clearable: true
                                 })
                         )
@@ -147,7 +150,12 @@ function handleEdit(row) {
         onPositiveClick: async () => {
             try {
                 // 调用后端接口更新商品信息
-                await updateProduct(editedProduct.value);
+                await updateProduct({
+                    ID: row.ID,
+                    Name: name.value,
+                    Stock: stock.value,
+                    Description: description.value
+                });
                 message.success('商品信息更新成功！');
                 getProducts(); // 刷新商品列表
             } catch (error) {
